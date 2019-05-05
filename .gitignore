@@ -8,7 +8,8 @@ terraform/terraform.tfstate.backup
 .DS_Store
 .vscode
 deployment.zip
-
+deployment/*
+deployment/
 .DS_STORE
 node_modules
 scripts/flow/*/.flowconfig

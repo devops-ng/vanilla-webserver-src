@@ -1,10 +1,17 @@
 
 # Go parameters
-BINARY_NAME=deployment
-all: build package clean
+BINARY_NAME=server
+PACKAGE_NAME=deployment
+all:  clean build package
+clean:
+	rm -rf $(PACKAGE_NAME)
+	rm -rf $(PACKAGE_NAME).zip
 build: 
 	cd server && GOOS=linux go build -o $(BINARY_NAME)
+	cd client && npm run build
 package:
-	cd server && zip $(BINARY_NAME).zip $(BINARY_NAME)
-clean:
-	cd server && rm $(BINARY_NAME)
+	mkdir deployment
+	mkdir deployment/public
+	cp -r client/build/* deployment/public
+	mv server/$(BINARY_NAME) deployment/$(BINARY_NAME)
+	zip -r $(PACKAGE_NAME).zip deployment/*
