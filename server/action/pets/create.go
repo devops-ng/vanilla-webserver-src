@@ -8,11 +8,11 @@ import (
 
 //CreatePetRequest request struct
 type CreatePetRequest struct {
-	Name  string `json:"name" binding:"required"`
-	Sex  string `json:"sex" binding:"required"`
-	Species  string `json:"species" binding:"required"`
-	Color string `json:"color"`
-	Breed string `json:"breed"`
+	Name     string `json:"name" binding:"required"`
+	Sex      string `json:"sex"`
+	Species  string `json:"species"`
+	Color    string `json:"color"`
+	Breed    string `json:"breed"`
 	ImageURL string `json:"imageURL"`
 }
 
@@ -25,12 +25,12 @@ type CreatePetResponse struct {
 func CreatePet(db *gorm.DB, req *CreatePetRequest) (*CreatePetResponse, error) {
 	uuid, _ := uuid.NewRandom()
 	newPet := &pet.Pet{
-		ID:    uuid.String(),
-		Name:  req.Name,
-		Sex: req.Sex,
-		Species: req.Species,
-		Color: req.Color,
-		Breed: req.Breed,
+		ID:       uuid.String(),
+		Name:     req.Name,
+		Sex:      req.Sex,
+		Species:  req.Species,
+		Color:    req.Color,
+		Breed:    req.Breed,
 		ImageURL: req.ImageURL,
 	}
 	id, err := pet.Create(db, newPet)

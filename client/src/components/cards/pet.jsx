@@ -35,12 +35,14 @@ class Pet extends Component {
   };
 
   isActivePet = (pet, petActive) => {
-    console.log(pet)
-    console.log(petActive)
     if (isNullOrUndefined(pet) || isNullOrUndefined(petActive)) {
       return false
     }
     return pet.id === petActive.id;
+  }
+
+  hashCode = (s)=>{
+    return s.split("").reduce(function(a,b){a=((a<<5)-a)+b.charCodeAt(0);return a&a},0);              
   }
 
   random = (seed) => {
@@ -58,7 +60,8 @@ class Pet extends Component {
       purple[500],
       orange[500]
     ];
-    let randomColor = colors[Math.floor(this.random(this.props.pet.id) * colors.length)];
+    let seed = this.hashCode(this.props.pet.id)
+    let randomColor = colors[Math.floor(this.random(seed) * colors.length)];
     let style = { backgroundColor: randomColor }
     return style
   }
@@ -66,7 +69,6 @@ class Pet extends Component {
   render() {
     const { pet, petActive, classes } = this.props
     const isActive = this.isActivePet(pet, petActive)
-    console.log(isActive)
     const selected = isActive ? classes.selected : null;
     return (
       <div className={classNames(classes.root)}>
@@ -78,14 +80,14 @@ class Pet extends Component {
             title={pet.name}
             subheader={pet.species}
             action={
-              <IconButton onClick={() => { this.props.deletePet({ petId: pet.id }) }}>
+              <IconButton onClick={() => {this.props.selectPet({pet:null}); this.props.deletePet({ petId: pet.id }) }}>
                 <DeleteIcon />
               </IconButton>
             }
           />
           <CardMedia
             className={classes.media}
-            image={pet.imageURL}
+            image={pet.imageURL!==""?pet.imageURL: "https://s3-us-west-2.amazonaws.com/terraform-in-action/cat-0.jpg"}
             title="#selfie"
           />
           <CardContent className={classes.content}>

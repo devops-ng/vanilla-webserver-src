@@ -104,17 +104,17 @@ class Create extends Component {
                                 aria-label="sex"
                                 name="sex"
                                 className={classes.group}
-                                value={this.state.gender}
+                                value={this.state.sex}
                                 onChange={this.handleChange}
                             >
                                 <FormControlLabel
-                                    value="female"
+                                    value="Female"
                                     control={<Radio color="primary" />}
                                     label="Female"
 
                                 />
                                 <FormControlLabel
-                                    value="male"
+                                    value="Male"
                                     control={<Radio color="primary" />}
                                     label="Male"
                                 />
@@ -132,9 +132,6 @@ class Create extends Component {
                                 displayEmpty
                                 className={classes.selectEmpty}
                             >
-                                <MenuItem value="">
-
-                                </MenuItem>
                                 <MenuItem value="Cat">Cat</MenuItem>
                                 <MenuItem value="Dog">Dog</MenuItem>
                                 <MenuItem value="Rat">Rat</MenuItem>

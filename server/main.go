@@ -25,13 +25,14 @@ func init() {
 func initializeRDSConn() {
 	//read from configuration file
 	dat, _ := ioutil.ReadFile("/etc/server.conf")
+	//dat, _ := ioutil.ReadFile("server.conf")
 	fmt.Printf("%s", string(dat))
 	m := make(map[string]string)
 	json.Unmarshal(dat, &m)
-	user := m["pg_user"]         //admin
-	password := m["pg_password"] //PJwuu-MbCsEXdU__
-	netloc := m["pg_netloc"]     //my-cool-project-db-instance.cozpurlif6yt.us-west-2.rds.amazonaws.com:3306
-	database := m["pg_database"] //pets
+	user := m["user"]         //admin
+	password := m["password"] //PJwuu-MbCsEXdU__
+	netloc := m["netloc"]     //my-cool-project-db-instance.cozpurlif6yt.us-west-2.rds.amazonaws.com:3306
+	database := m["database"] //pets
 
 	dsn := fmt.Sprintf("%s:%s@tcp(%s)/%s", user, password, netloc, database)
 	var err error
@@ -52,11 +53,19 @@ func main() {
 	r := gin.Default()
 	r.Use(static.Serve("/", static.LocalFile("/run/public", false)))
 	r.POST("/pets", createPetHandler)
+	r.DELETE("/pets/:id", deletePetHandler)
 	r.GET("/pets/:id", getPetHandler)
 	r.GET("/pets", listPetsHandler)
+	r.OPTIONS("/pets", optionsPetHandler)
+	r.OPTIONS("/pets/:id", optionsPetHandler)
 	r.Run()
 }
 
+func optionsPetHandler(c *gin.Context) {
+	c.Header("Access-Control-Allow-Origin", "*")
+	c.Header("Access-Control-Allow-Methods", "GET, POST, DELETE")
+	c.Header("Access-Control-Allow-Headers", "origin, content-type, accept")
+}
 func createPetHandler(c *gin.Context) {
 	c.Header("Access-Control-Allow-Origin", "*")
 	var req pets.CreatePetRequest
@@ -69,8 +78,19 @@ func createPetHandler(c *gin.Context) {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
+	c.JSON(http.StatusCreated, res)
+}
+
+func deletePetHandler(c *gin.Context) {
+	c.Header("Access-Control-Allow-Origin", "*")
+	id := c.Param("id")
+	req := pets.DeletePetRequest{ID: id}
+	res, err := pets.DeletePet(db, &req)
+	if err != nil {
+		c.JSON(http.StatusNotFound, res)
+		return
+	}
 	c.JSON(http.StatusOK, res)
-	return
 }
 
 func listPetsHandler(c *gin.Context) {

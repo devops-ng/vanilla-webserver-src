@@ -1,6 +1,8 @@
 package pet
 
 import (
+	"fmt"
+
 	"github.com/jinzhu/gorm"
 )
 
@@ -41,4 +43,16 @@ func List(db *gorm.DB, limit uint) (*[]Pet, error) {
 		return nil, err
 	}
 	return &pets, nil
+}
+
+//Delete deletes a pet in the database
+func Delete(db *gorm.DB, id string) error {
+	pet, err := FindById(db, id)
+	if err != nil {
+		fmt.Printf("1:%v", err)
+		return err
+	}
+	err = db.Delete(pet).Error
+	fmt.Printf("2:%v", err)
+	return err
 }

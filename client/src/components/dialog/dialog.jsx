@@ -15,7 +15,7 @@ DialogContent,
   Button
 
 } from '@material-ui/core';
-const AlertDialog = ({title,handleClose,handleOpen,handleOkay,open,icon,classes,children,disableConfirm=false,hidden=false,valid=false}) => {
+const AlertDialog = ({title,handleClose,handleOpen,handleConfirm,open,icon,classes,children,disableConfirm=false,hidden=false,valid=false}) => {
   const hiddenClass =hidden ? classes.hidden : null;
   return (
     <div className={classNames(hiddenClass)}>
@@ -38,7 +38,7 @@ const AlertDialog = ({title,handleClose,handleOpen,handleOkay,open,icon,classes,
             Cancel
           </Button>
           { !disableConfirm ?
-          <Button onClick={handleOkay} color="primary" autoFocus disabled={!valid} >
+          <Button onClick={handleConfirm} color="primary" autoFocus disabled={!valid} >
             Confirm
           </Button>
           :null }

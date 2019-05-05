@@ -1,4 +1,5 @@
 swinkler.pem
+server.conf
 proxy.sh
 server/vendor/*
 !server/vendor/vendor.json

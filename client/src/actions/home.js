@@ -17,15 +17,20 @@ export function refreshPets({petId}) {
 
 export function selectPet({ pet }) {
     return (dispatch) => {
+        if(isNullOrUndefined(pet)){
+            dispatch(activePet({}));
+            dispatch(push({ pathname: '/',search:``}))
+            return
+        }
         dispatch(activePet(pet));
-        dispatch(push({ pathname: '/select', search: `?pet=${pet.id}` }))
+        dispatch(push({ pathname: '/', search: `?pet=${pet.id}` }))
         dispatch(refreshPets({petId:null}));
     }
 }
 
 export function createPet({ pet,petId }) {
     return (dispatch) => {
-        const data = { pet }
+        const data = pet
         const endpoint = `${API_URL}/pets`;
         dispatch(petsLoading(true));
         fetch(endpoint,{
@@ -36,9 +41,10 @@ export function createPet({ pet,petId }) {
                     "Content-Type": "application/json",
                 },
         })
-        .then(dispatch(refreshPets({petId})))
+        .then(()=>{dispatch(refreshPets({petId:null}))})
         .catch(
-            e => {console.log(e);}
+            e => {console.log(e);dispatch(petsLoading(false))}
+
         )
     }
 }
@@ -50,9 +56,9 @@ export function deletePet( {petId} ) {
                 method: 'DELETE',
                 mode: "cors",
         })
-        .then(dispatch(refreshPets()))
+        .then(()=>{dispatch(refreshPets({petId:null}))})
         .catch(
-            e => {console.log(e);}
+            e => {console.log(e);dispatch(petsLoading(false))}
         )
     }
 }
@@ -67,20 +73,19 @@ function activePet(pet) {
 function listPets(petId=null) {
     return (dispatch) => {
         const endpoint = `${API_URL}/pets`;
+        dispatch(petsLoading(true));
         fetch(endpoint, { method: 'GET', mode: "cors", })
             .then(res => {
                 res.json().then((json) => {
                     dispatch(pets(json.pets));
                     if(!isNullOrUndefined(petId)){
                         let pet = json.pets.find((pet)=>{return pet.id===petId})
-                        dispatch(selectPet({pet:pet}))
+                        dispatch(selectPet({pet}))
                     }
-                }).catch(e => { console.log(e); })
+                }).catch(e => { console.log(e) })
             })
-            .catch(e => { console.log(e); })
-            .finally(() => {
-                dispatch(petsLoading(false));
-            })
+            .catch(e => { console.log(e)})
+            .finally(()=>{dispatch(petsLoading(false))})
     }
 }
 

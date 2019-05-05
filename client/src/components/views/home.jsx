@@ -6,6 +6,7 @@ import {
     IconButton,
     Typography,
     Toolbar,
+    CircularProgress
 } from '@material-ui/core';
 import {
     Refresh as RefreshIcon,
@@ -28,7 +29,11 @@ class Home extends Component {
           if (key.includes("pet")){
              petId = value;
           }
-          this.props.refreshPets({petId:petId})
+          if(isNullOrUndefined(petId)){
+            petId=null;
+
+          }
+            this.props.refreshPets({petId});
         }
     }
 
@@ -50,23 +55,29 @@ class Home extends Component {
         })
     }
 
-
+    renderContent = (petsList,petsLoading) => {
+        if(petsLoading){
+            return   <CircularProgress/>
+        }
+        return petsList.length>0?petsList:<Typography variant="h5">Click the "+" button to add pets</Typography>
+        
+    }
 
     render() {
-        const { pets, petActive, classes } = this.props;
+        const { pets, petActive, petsLoading,classes } = this.props;
         const petsList = this.renderPets(pets,petActive)
+        const content = this.renderContent(petsList,petsLoading)
         return (
             <div className={classNames(classes.root)}>
                 <Toolbar>
-                     <Typography variant="h3">My Pets!</Typography>
+                     <Typography variant="h3" internalDeprecatedVariant>My Pets!</Typography>
                     <div className={classes.flex}/>
                     <Create createPet={this.props.createPet} petActive/>
-                    <IconButton onClick={() => { this.props.refreshPets() }} >
+                    <IconButton onClick={() => { this.props.refreshPets({petId:petActive.id}) }} >
                         <RefreshIcon />
                     </IconButton>
                 </Toolbar>
-                {petsList.length>0?petsList:<Typography variant="h5">Click the "+" button to add pets</Typography>}
-
+               {content}
             </div>
         )
     }
@@ -79,6 +90,7 @@ Home.propTypes = {
     selectPet: PropTypes.func.isRequired,
     pets: PropTypes.array.isRequired,
     petActive: PropTypes.object.isRequired,
+    petsLoading:PropTypes.bool.isRequired,
     deletePet: PropTypes.func.isRequired,
     createPet: PropTypes.func.isRequired,
 };
