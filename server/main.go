@@ -25,7 +25,6 @@ func init() {
 func initializeRDSConn() {
 	//read from configuration file
 	dat, _ := ioutil.ReadFile("/etc/server.conf")
-	//dat, _ := ioutil.ReadFile("server.conf")
 	fmt.Printf("%s", string(dat))
 	m := make(map[string]string)
 	json.Unmarshal(dat, &m)
@@ -51,7 +50,7 @@ func validateRDS() {
 
 func main() {
 	r := gin.Default()
-	r.Use(static.Serve("/", static.LocalFile("/run/public", false)))
+	r.Use(static.Serve("/", static.LocalFile("/deployment/public", false)))
 	r.POST("/pets", createPetHandler)
 	r.DELETE("/pets/:id", deletePetHandler)
 	r.GET("/pets/:id", getPetHandler)
